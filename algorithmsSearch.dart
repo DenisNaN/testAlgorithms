@@ -2,7 +2,7 @@
 import 'dart:math';
 
 void main(){
-  List listForSearch = List.generate(1000000000, (index) => index + 1, growable: false);
+  List<int> listForSearch = List.generate(1000000000, (index) => index + 1, growable: false);
   int elementToSearch = 766988999;
   TestAplgorithms testAplgorithms = TestAplgorithms();
 
@@ -10,6 +10,12 @@ void main(){
   testAplgorithms.durationForAlgorithms('Binary Search', listForSearch, elementToSearch, testAplgorithms.binarySearch);
   testAplgorithms.durationForAlgorithms('Jump Search', listForSearch, elementToSearch, testAplgorithms.jumpSearch);
   testAplgorithms.durationForAlgorithms('Interpolation Search', listForSearch, elementToSearch, testAplgorithms.interpolationSearch);
+
+  DateTime dateStart = DateTime.now();
+  int pos = testAplgorithms.exponentialSearch(listForSearch, listForSearch.length, elementToSearch);
+  DateTime dateFinish = DateTime.now();
+  Duration duration = dateFinish.difference(dateStart);
+  print('Exponential Search. Position: $pos. duration: ${duration.inMicroseconds}');
 }
 
 class TestAplgorithms{
@@ -82,6 +88,35 @@ class TestAplgorithms{
     if(array[indexB] == elementToSearch) return indexB;
 
     return - 1;
+  }
+
+  int binarySearch1(List<int> list, int l, int r, int x) {
+    while (l <= r) {
+      int m = l + (r - l) ~/ 2;
+
+      if (list[m] == x) {
+        return m;
+      }
+
+      if (list[m] < x) {
+        l = m + 1;
+      } else {
+        r = m - 1;
+      }
+    }
+
+    return -1;
+  }
+
+  int exponentialSearch(List<int> list, int n, int x) {
+    // mengecek jika nilai x muncul di awal
+    if (list[0] == x) return 0;
+
+    int i = 1;
+    while (i < n && list[i] <= x) i = i * 2;
+
+    //  panggil binary search untuk mencari range
+    return binarySearch1(list, 0, n - 1, x);
   }
   
   void durationForAlgorithms(String nameFunction, List array, int i, int Function(List array, dynamic elementToSearch) linearSearch){
